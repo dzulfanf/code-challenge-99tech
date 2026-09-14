@@ -1,16 +1,12 @@
 # Problem 3 - Messy React
 
 ## Overview
+****
+This problem presents a React component that displays wallet balances and their corresponding USD values.
 
-This problem presents a React component that displays wallet balances
-and their corresponding USD values.
+The original implementation contains several correctness issues, computational inefficiencies, React anti-patterns, and TypeScript problems.
 
-The original implementation contains several correctness issues,
-computational inefficiencies, React anti-patterns, and TypeScript
-problems.
-
-The goal is to identify these issues, explain their impact, and
-refactor the implementation without introducing unnecessary complexity.
+The goal is to identify these issues, explain their impact, and refactor the implementation without introducing unnecessary complexity.
 
 ## Original Behavior
 
@@ -52,8 +48,7 @@ if (lhsPriority > -99) {
 
 `lhsPriority` is not defined in this scope.
 
-This causes the implementation to fail before the intended filtering 
-logic can execute.
+This causes the implementation to fail before the intended filtering logic can execute.
 
 The condition should use the variable that was actually created:
 
@@ -69,18 +64,15 @@ The original implementation includes balances when:
 balance.amount <= 0
 ```
 
-This means zero and negative balances are included while positive 
-balances are excluded.
+This means zero and negative balances are included while positive balances are excluded.
 
-For a wallet balance list, the intended behavior is to display 
-balances with a positive amount:
+For a wallet balance list, the intended behavior is to display balances with a positive amount:
 
 ```ts
 balance.amount > 0
 ```
 
 This is a correctness issue rather than a performance issue.
-
 
 ### 2. TypeScript Issues
 
@@ -101,8 +93,7 @@ However, the implementation accesses:
 balance.blockchain
 ```
 
-This means the type definition does not represent the actual shape of 
-the data being consumed by the component.
+This means the type definition does not represent the actual shape of the data being consumed by the component.
 
 The type should include the `blockchain` property:
 
@@ -114,9 +105,7 @@ interface WalletBalance {
 }
 ```
 
-Keeping the type aligned with the actual data allows TypeScript to 
-detect invalid property access during development and makes the 
-component's data contract explicit.
+Keeping the type aligned with the actual data allows TypeScript to detect invalid property access during development and makes the component's data contract explicit.
 
 #### Use of `any`
 
@@ -128,15 +117,13 @@ const getPriority = (blockchain: any): number => {
 
 Using `any` disables TypeScript's type checking for this value.
 
-Since the function only needs a blockchain identifier, `string` is a 
-more appropriate type:
+Since the function only needs a blockchain identifier, `string` is a more appropriate type:
 
 ```ts
 const getPriority = (blockchain: string): number => {
 ```
 
 This preserves type safety without introducing unnecessary complexity.
-
 
 ### 3. Computational Inefficiencies
 
@@ -161,11 +148,9 @@ The component later maps over `sortedBalances` instead:
 const rows = sortedBalances.map(...);
 ```
 
-This means the first `map()` performs an unnecessary `O(n)` traversal 
-and creates a new array that is immediately discarded.
+This means the first `map()` performs an unnecessary `O(n)` traversal and creates a new array that is immediately discarded.
 
-The formatting can be performed directly when passing the value to `WalletRow`, 
-avoiding the unnecessary transformation.
+The formatting can be performed directly when passing the value to `WalletRow`, avoiding the unnecessary transformation.
 
 #### Unnecessary `useMemo` dependency
 
@@ -173,14 +158,13 @@ The sorting calculation uses:
 
 ```ts
 useMemo(() => {
-  // filter and sort balances
+  // *filter and sort balances*
 }, [balances, prices]);
 ```
 
 However, `prices` is not used anywhere inside the memoized calculation.
 
-When `prices` changes, React will therefore recalculate the filtering and 
-sorting even though the result only depends on `balances`.
+When `prices` changes, React will therefore recalculate the filtering and sorting even though the result only depends on `balances`.
 
 The dependency should be limited to:
 
@@ -190,6 +174,12 @@ The dependency should be limited to:
 
 This prevents unnecessary recalculation when prices change.
 
+The refactored implementation keeps `useMemo` because the derived value performs both filtering and sorting.
+
+The calculation depends only on `balances`, so `prices` is not included in the dependency array.
+
+This is a deliberate use of memoization rather than applying `useMemo` to every calculation.
+
 #### Recreating `getPriority` on every render
 
 `getPriority` is declared inside the component:
@@ -197,21 +187,16 @@ This prevents unnecessary recalculation when prices change.
 ```ts
 const WalletPage: React.FC<Props> = (props: Props) => {
   const getPriority = (blockchain: any): number => {
-    // ...
+    // *...*
   };
 };
 ```
 
 This creates a new function instance whenever `WalletPage` renders.
 
-The function does not depend on component state or props, so it can be 
-moved outside the component.
+The function does not depend on component state or props, so it can be moved outside the component.
 
-This is a minor optimization rather than a significant performance 
-bottleneck. The main benefit is keeping static business logic 
-independent from the component lifecycle and making the function 
-easier to reuse and test.
-
+This is a minor optimization rather than a significant performance bottleneck. The main benefit is keeping static business logic independent from the component lifecycle and making the function easier to reuse and test.
 
 ### 4. React Anti-Patterns
 
@@ -225,14 +210,11 @@ The implementation uses the array index as the key:
 />
 ```
 
-The list is sorted dynamically, so the position of an item can 
-change between renders.
+The list is sorted dynamically, so the position of an item can change between renders.
 
-Using the index as a key means React may associate a different wallet 
-balance with the same key after the list is reordered.
+Using the index as a key means React may associate a different wallet balance with the same key after the list is reordered.
 
-A stable identifier should be used instead, such as a combination of 
-blockchain and currency when that combination is unique:
+A stable identifier should be used instead, such as a combination of blockchain and currency when that combination is unique:
 
 ```tsx
 <WalletRow
@@ -240,28 +222,25 @@ blockchain and currency when that combination is unique:
 />
 ```
 
-This allows React to correctly track the identity of each wallet 
-balance when the list changes.
+This allows React to correctly track the identity of each wallet balance when the list changes.
 
 #### Redundant prop typing
 
-The component declares the props type twice:
+The original component declares the props type twice:
 
 ```ts
 const WalletPage: React.FC<Props> = (props: Props) => {
 ```
 
-`Props` is already provided through `React.FC<Props>` and does not 
-need to be repeated on the function parameter.
+`Props` is already provided through `React.FC<Props>` and does not need to be repeated on the function parameter.
 
-The component can be simplified to:
+Since the custom `Props` interface is also unnecessary, the refactored component uses `BoxProps` directly:
 
 ```ts
-const WalletPage = (props: Props) => {
+const WalletPage = (props: BoxProps) => {
 ```
 
-This makes the component declaration more explicit and avoids 
-redundant typing.
+This removes redundant typing and unnecessary type indirection.
 
 #### Unused `children` prop
 
@@ -273,11 +252,9 @@ const { children, ...rest } = props;
 
 However, `children` is never rendered or otherwise used.
 
-This creates an unnecessary variable and makes the component API 
-appear to support content that the component does not actually consume.
+This creates an unnecessary variable and makes the component API appear to support content that the component does not actually consume.
 
-If `children` is not part of the component's intended behavior, it should 
-not be extracted.
+Since `children` is not part of the component's intended behavior, it is not extracted in the refactored implementation.
 
 #### Unnecessary prop extension
 
@@ -285,14 +262,12 @@ The component defines:
 
 ```ts
 interface Props extends BoxProps {
-
 }
 ```
 
 The interface does not add any properties to `BoxProps`.
 
-An empty extension provides no additional type information and adds 
-unnecessary indirection.
+An empty extension provides no additional type information and adds unnecessary indirection.
 
 If the component only needs `BoxProps`, the type can be used directly:
 
@@ -300,15 +275,13 @@ If the component only needs `BoxProps`, the type can be used directly:
 const WalletPage = (props: BoxProps) => {
 ```
 
-If custom props are introduced later, a dedicated `Props` type can 
-then extend `BoxProps`.
-
+If custom props are introduced later, a dedicated `Props` type can then extend `BoxProps`.
 
 ### 5. Maintainability Issues
 
-#### Business rules are embedded directly in the component
+#### Static business rules can be separated from the component
 
-The blockchain priority logic is defined inside `WalletPage`:
+The blockchain priority logic is defined inside `WalletPage` in the original implementation:
 
 ```ts
 const getPriority = (blockchain: any): number => {
@@ -329,14 +302,31 @@ const getPriority = (blockchain: any): number => {
 };
 ```
 
-This makes the component responsible for both rendering and 
-maintaining a static business rule.
+This makes the component responsible for both rendering and maintaining a static business rule.
 
-The priority configuration can be separated from the component so that 
-changes to blockchain priorities do not require modifying the 
-component logic.
+In the refactored implementation, the static priority configuration is moved outside the component:
 
-A lookup map is also easier to extend than a growing `switch` statement.
+```ts
+const BLOCKCHAIN_PRIORITY: Record<string, number> = {
+  Osmosis: 100,
+  Ethereum: 50,
+  Arbitrum: 30,
+  Zilliqa: 20,
+  Neo: 20,
+};
+
+const DEFAULT_PRIORITY = -99;
+```
+
+The priority lookup is then handled by a small helper function:
+
+```ts
+const getPriority = (blockchain: string): number => {
+  return BLOCKCHAIN_PRIORITY[blockchain] ?? DEFAULT_PRIORITY;
+};
+```
+
+This keeps static configuration independent from the component lifecycle and makes the business rule easier to maintain and test.
 
 #### Multiple transformations make the data flow harder to follow
 
@@ -354,11 +344,9 @@ rows
 
 However, `formattedBalances` is not actually used when creating `rows`.
 
-This makes the data flow harder to understand and increases the amount 
-of code that a developer needs to reason about.
+This makes the data flow harder to understand and increases the amount of code that a developer needs to reason about.
 
-The refactored implementation should keep the transformation pipeline 
-as simple as possible:
+The refactored implementation keeps the transformation pipeline as simple as possible:
 
 ```text
 balances
@@ -368,8 +356,7 @@ filter + sort
 render
 ```
 
-Formatting and USD value calculation can happen at the presentation 
-boundary where they are needed.
+Formatting and USD value calculation can happen at the presentation boundary where they are needed.
 
 ## Summary
 
@@ -383,7 +370,7 @@ boundary where they are needed.
 | Performance | Incorrect `useMemo` dependency | Causes unnecessary filtering and sorting when prices change |
 | Performance | `getPriority` recreated on render | Minor unnecessary function recreation |
 | React | Array index used as key | Unstable identity when the list is reordered |
-| React | Redundant prop typing | Avoids declaring the same props type twice |
+| React | Redundant prop typing | Adds unnecessary type syntax and indirection |
 | React | Unused `children` | Unused value and misleading component API |
 | React | Empty `Props` extension | Adds unnecessary type indirection |
 | Maintainability | Business rules inside component | Makes static configuration harder to maintain |
@@ -402,6 +389,4 @@ The refactoring will follow a priority-based approach:
 7. Keep `useMemo` only where it provides a clear benefit.
 8. Avoid introducing unnecessary abstractions or libraries.
 
-The goal is not to rewrite the component completely, but to make 
-the smallest set of changes that improves correctness, performance, 
-type safety, and maintainability.
+The goal is not to rewrite the component completely, but to make the smallest set of changes that improves correctness, performance, type safety, and maintainability.

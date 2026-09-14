@@ -58,40 +58,73 @@ export function SwapForm({ prices }: SwapFormProps) {
   };
 
   return (
-    <main>
-      <h1>Currency Swap</h1>
+    <main className="swap-page">
+      <section className="swap-card">
+        <header className="swap-header">
+          <h1>Swap</h1>
+          <p>Exchange tokens simply</p>
+        </header>
 
-      <CurrencyInput
-        id="from-amount"
-        label="You pay"
-        amount={amount}
-        currency={fromCurrency}
-        currencies={currencies}
-        error={amountError}
-        onAmountChange={(value) => {
-          setAmount(value);
-          setAmountTouched(true);
-        }}
-        onCurrencyChange={setFromCurrency}
-      />
+        <div className="swap-fields">
+          <CurrencyInput
+            id="from-amount"
+            label="You pay"
+            amount={amount}
+            currency={fromCurrency}
+            currencies={currencies}
+            error={amountError}
+            onAmountChange={(value) => {
+              setAmount(value);
+              setAmountTouched(true);
+            }}
+            onCurrencyChange={setFromCurrency}
+          />
 
-      <button type="button" onClick={handleSwap}>
-        Swap
-      </button>
+          <button
+            className="swap-direction"
+            type="button"
+            onClick={handleSwap}
+            aria-label="Swap currencies"
+          >
+            ↕
+          </button>
 
-      <CurrencyInput
-        id="to-amount"
-        label="You receive"
-        amount={
-          receivedAmount === null
-            ? ""
-            : receivedAmount.toString()
-        }
-        currency={toCurrency}
-        currencies={currencies}
-        readOnly
-        onCurrencyChange={setToCurrency}
-      />
+          <CurrencyInput
+            id="to-amount"
+            label="You receive"
+            amount={
+              receivedAmount === null
+                ? ""
+                : receivedAmount.toString()
+            }
+            currency={toCurrency}
+            currencies={currencies}
+            readOnly
+            onCurrencyChange={setToCurrency}
+          />
+        </div>
+
+        {receivedAmount !== null && (
+          <div className="exchange-rate">
+            1 {fromCurrency} ≈{" "}
+            {(
+              prices[fromCurrency] /
+              prices[toCurrency]
+            ).toLocaleString(undefined, {
+              maximumFractionDigits: 8,
+            })}{" "}
+            {toCurrency}
+          </div>
+        )}
+
+        <button
+          className="swap-submit"
+          type="button"
+          disabled={Boolean(amountError) || !amount}
+        >
+          Swap
+        </button>
+      </section>
     </main>
   );
 }

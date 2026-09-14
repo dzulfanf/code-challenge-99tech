@@ -1,4 +1,4 @@
-import TokenIcon from "./TokenIcon";
+import { CurrencySelector } from "./CurrencySelector";
 
 type CurrencyInputProps = {
   id: string;
@@ -40,10 +40,11 @@ export function CurrencyInput({
 }: CurrencyInputProps) {
   return (
     <div>
-      <label htmlFor={id}>{label}</label>
+      <label className="currency-label" htmlFor={id}>{label}</label>
 
-      <div>
+      <div className={`currency-input-box ${error ? "currency-input-box-error" : ""}`}>
         <input
+          className="currency-amount"
           id={id}
           type="text"
           inputMode="decimal"
@@ -58,26 +59,19 @@ export function CurrencyInput({
           }
         />
 
-        <div>
-          <TokenIcon currency={currency} />
-
-          <select
-            value={currency}
-            onChange={(event) =>
-              onCurrencyChange(event.target.value)
-            }
-          >
-            {currencies.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CurrencySelector
+          currencies={currencies}
+          value={currency}
+          onChange={onCurrencyChange}
+        />
       </div>
 
       {error && (
-        <p id={`${id}-error`} role="alert">
+        <p
+          className="currency-error"
+          id={`${id}-error`}
+          role="alert"
+        >
           {error}
         </p>
       )}

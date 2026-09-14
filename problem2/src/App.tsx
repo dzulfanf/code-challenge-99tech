@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SwapForm } from "./components/SwapForm";
 import { fetchPrices } from "./services/priceService";
 import type { PriceMap } from "./types/price";
+import { SwapFormSkeleton } from "./components/SwapFormSkeleton";
 
 /**
  * Renders the main application and loads currency price data.
@@ -29,7 +30,7 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return <p>Loading prices...</p>;
+    return <SwapFormSkeleton />;
   }
 
   if (error) {

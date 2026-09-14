@@ -6,6 +6,7 @@ type CurrencyInputProps = {
   amount: string;
   currency: string;
   currencies: string[];
+  excludeCurrency?: string;
   readOnly?: boolean;
   error?: string | null;
   onAmountChange?: (amount: string) => void;
@@ -33,6 +34,7 @@ export function CurrencyInput({
   amount,
   currency,
   currencies,
+  excludeCurrency,
   readOnly = false,
   error,
   onAmountChange,
@@ -49,6 +51,7 @@ export function CurrencyInput({
           type="text"
           inputMode="decimal"
           value={amount}
+          placeholder="0.00"
           readOnly={readOnly}
           onChange={(event) =>
             onAmountChange?.(event.target.value)
@@ -63,6 +66,7 @@ export function CurrencyInput({
           currencies={currencies}
           value={currency}
           onChange={onCurrencyChange}
+          exclude={excludeCurrency}
         />
       </div>
 

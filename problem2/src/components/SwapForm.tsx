@@ -3,6 +3,7 @@ import { CurrencyInput } from "./CurrencyInput";
 import { calculateExchangeAmount } from "../utils/exchangeRate";
 import { validateAmount } from "../utils/validation";
 import type { PriceMap } from "../types/price";
+import { formatAmount } from "../utils/formatNumber";
 
 type SwapFormProps = {
   prices: PriceMap;
@@ -72,6 +73,7 @@ export function SwapForm({ prices }: SwapFormProps) {
             amount={amount}
             currency={fromCurrency}
             currencies={currencies}
+            excludeCurrency={toCurrency}
             error={amountError}
             onAmountChange={(value) => {
               setAmount(value);
@@ -95,10 +97,11 @@ export function SwapForm({ prices }: SwapFormProps) {
             amount={
               receivedAmount === null
                 ? ""
-                : receivedAmount.toString()
+                : formatAmount(receivedAmount)
             }
             currency={toCurrency}
             currencies={currencies}
+            excludeCurrency={fromCurrency}
             readOnly
             onCurrencyChange={setToCurrency}
           />
@@ -107,12 +110,9 @@ export function SwapForm({ prices }: SwapFormProps) {
         {receivedAmount !== null && (
           <div className="exchange-rate">
             1 {fromCurrency} ≈{" "}
-            {(
-              prices[fromCurrency] /
-              prices[toCurrency]
-            ).toLocaleString(undefined, {
-              maximumFractionDigits: 8,
-            })}{" "}
+            {formatAmount(
+              prices[fromCurrency] / prices[toCurrency],
+            )}{" "}
             {toCurrency}
           </div>
         )}

@@ -1,3 +1,5 @@
+/* *Color System* */
+
 :root {
   --color-primary: #5ccb9a;
   --color-primary-dark: #35a978;
@@ -5,13 +7,21 @@
   --color-background: #f5f8f6;
   --color-surface: #ffffff;
   --color-surface-alt: #f8faf9;
+  --color-surface-hover: #f0fbf6;
 
   --color-text: #171717;
   --color-text-muted: #737373;
+  --color-text-placeholder: #a3a3a3;
 
   --color-border: #e5e9e7;
-
   --color-error: #dc4c4c;
+
+  --shadow-card: 0 20px 50px rgb(44 95 73 / 8%);
+  --shadow-control: 0 2px 8px rgb(44 95 73 / 6%);
+  --shadow-dropdown: 0 16px 40px rgb(44 95 73 / 12%);
+  --shadow-primary-hover: 0 8px 20px rgb(53 169 120 / 20%);
+  --shadow-focus: 0 0 0 3px rgb(92 203 154 / 12%);
+  --shadow-search-focus: 0 0 0 3px rgb(92 203 154 / 10%);
 }
 
 * {
@@ -48,6 +58,8 @@ button {
   cursor: pointer;
 }
 
+/* *Swap Page* */
+
 .swap-page {
   min-height: 100vh;
   display: flex;
@@ -56,15 +68,19 @@ button {
   padding: 24px;
 }
 
+/* *Swap Card* */
+
 .swap-card {
   width: 100%;
   max-width: 480px;
   padding: 24px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: 24px;
   background: var(--color-surface);
-  box-shadow: 0 20px 50px rgb(44 95 73 / 8%);
+  box-shadow: var(--shadow-card);
 }
+
+/* *Swap Header* */
 
 .swap-header {
   margin-bottom: 24px;
@@ -78,12 +94,16 @@ button {
 
 .swap-header p {
   margin: 6px 0 0;
-  color: #737373;
+  color: var(--color-text-muted);
 }
+
+/* *Swap Fields* */
 
 .swap-fields {
   position: relative;
 }
+
+/* *Swap Direction* */
 
 .swap-direction {
   position: relative;
@@ -100,7 +120,7 @@ button {
   color: var(--color-text);
   font-size: 18px;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgb(44 95 73 / 6%);
+  box-shadow: var(--shadow-control);
   transition:
     background 150ms ease,
     border-color 150ms ease,
@@ -109,12 +129,19 @@ button {
 
 .swap-direction:hover {
   border-color: var(--color-primary);
-  background: #f0fbf6;
+  background: var(--color-surface-hover);
+}
+
+.swap-direction:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .swap-direction:active {
   transform: scale(0.96);
 }
+
+/* *Exchange Rate* */
 
 .exchange-rate {
   margin-top: 20px;
@@ -123,6 +150,8 @@ button {
   text-align: center;
 }
 
+/* *Swap Submit* */
+
 .swap-submit {
   width: 100%;
   margin-top: 20px;
@@ -130,7 +159,7 @@ button {
   border: 0;
   border-radius: 14px;
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-surface);
   font-weight: 700;
   transition:
     background 150ms ease,
@@ -140,7 +169,7 @@ button {
 
 .swap-submit:hover:not(:disabled) {
   background: var(--color-primary-dark);
-  box-shadow: 0 8px 20px rgb(53 169 120 / 20%);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .swap-submit:active:not(:disabled) {
@@ -152,17 +181,23 @@ button {
   opacity: 0.45;
 }
 
+/* *Currency Input* */
+
 .currency-input {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
+
+/* *Currency Label* */
 
 .currency-label {
   display: block;
   margin-bottom: 8px;
-  color: #737373;
+  color: var(--color-text-muted);
   font-size: 14px;
   font-weight: 500;
 }
+
+/* *Currency Input Box* */
 
 .currency-input-box {
   display: flex;
@@ -170,7 +205,7 @@ button {
   gap: 12px;
   min-height: 76px;
   padding: 12px 14px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: 18px;
   background: var(--color-surface-alt);
   transition:
@@ -182,12 +217,14 @@ button {
 .currency-input-box:focus-within {
   border-color: var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 0 0 3px rgb(92 203 154 / 12%);
+  box-shadow: var(--shadow-focus);
 }
 
 .currency-input-box-error {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
+
+/* *Currency Amount* */
 
 .currency-amount {
   min-width: 0;
@@ -199,15 +236,23 @@ button {
   font-weight: 600;
 }
 
-.currency-amount::placeholder {
-  color: #a3a3a3;
+.currency-amount[readonly] {
+  color: var(--color-text);
 }
+
+.currency-amount::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+/* *Currency Error* */
 
 .currency-error {
   margin: 6px 4px 0;
-  color: #dc2626;
+  color: var(--color-error);
   font-size: 13px;
 }
+
+/* *Currency Selector* */
 
 .currency-selector {
   position: relative;
@@ -221,43 +266,79 @@ button {
   padding: 8px 10px;
   border: 0;
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--color-surface);
+  color: var(--color-text);
   font-weight: 600;
+  transition: background 150ms ease;
 }
 
 .currency-selector-trigger:hover {
-  background: #f0f0f0;
+  background: var(--color-surface-hover);
+}
+
+.currency-selector-trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .currency-selector-trigger img {
   display: block;
+  flex-shrink: 0;
   border-radius: 50%;
 }
 
+.currency-selector-chevron {
+  margin-left: auto;
+  font-size: 14px;
+}
+
+/* *Currency Dropdown* */
+
 .currency-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
   right: 0;
   z-index: 10;
   width: 240px;
   padding: 8px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 12px 32px rgb(0 0 0 / 10%);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-dropdown);
 }
+
+.currency-dropdown-bottom {
+  top: calc(100% + 8px);
+}
+
+.currency-dropdown-top {
+  bottom: calc(100% + 8px);
+}
+
+/* *Currency Search* */
 
 .currency-search {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   outline: 0;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.currency-search::placeholder {
+  color: var(--color-text-muted);
+  font-size: 13px;
 }
 
 .currency-search:focus {
-  border-color: #a3a3a3;
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-search-focus);
 }
+
+/* *Currency List* */
 
 .currency-list {
   max-height: 240px;
@@ -266,6 +347,8 @@ button {
   overflow-y: auto;
   list-style: none;
 }
+
+/* *Currency Option* */
 
 .currency-option {
   display: flex;
@@ -276,14 +359,158 @@ button {
   border: 0;
   border-radius: 10px;
   background: transparent;
+  color: var(--color-text);
   text-align: left;
+  transition: background 150ms ease;
 }
 
 .currency-option:hover {
-  background: #f5f5f5;
+  background: var(--color-surface-hover);
+}
+
+.currency-option:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
 }
 
 .currency-option img {
   display: block;
+  flex-shrink: 0;
   border-radius: 50%;
+}
+
+.currency-option-selected {
+  background: var(--color-background);
+}
+
+.currency-option-check {
+  margin-left: auto;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+/* *Currency Empty* */
+
+.currency-empty {
+  margin: 0;
+  padding: 24px 12px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* *Currency Selector Chevron* */
+
+.currency-selector-chevron {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 150ms ease;
+}
+
+.currency-selector-chevron svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.currency-selector-chevron-open {
+  transform: rotate(180deg);
+}
+
+/* *Token Icon Fallback* */
+
+.token-icon-fallback {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* *Loading Skeleton* */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-alt) 25%,
+    var(--color-surface-hover) 50%,
+    var(--color-surface-alt) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeleton-title {
+  width: 90px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.skeleton-subtitle {
+  width: 180px;
+  height: 18px;
+  margin-top: 8px;
+  border-radius: 6px;
+}
+
+.skeleton-field {
+  margin-bottom: 10px;
+}
+
+.skeleton-label {
+  width: 70px;
+  height: 16px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+.skeleton-input {
+  width: 100%;
+  height: 76px;
+  border-radius: 18px;
+}
+
+.skeleton-direction {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.skeleton-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.skeleton-rate {
+  width: 180px;
+  height: 16px;
+  margin: 20px auto 0;
+  border-radius: 6px;
+}
+
+.skeleton-submit {
+  width: 100%;
+  height: 46px;
+  margin-top: 20px;
+  border-radius: 14px;
+}
+
+@keyframes skeleton-loading {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
 }

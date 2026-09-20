@@ -29,7 +29,7 @@ The implementation focuses on:
 - Accessibility considerations
 - Unit tests for utility functions
 
-See [`problem2/`](./problem2/).
+See [`problem2/`](./problem2/). [Preview](https://code-challenge-99tech-problem2.vercel.app/)
 
 ### Problem 3 — Messy React
 
